@@ -10,41 +10,78 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var lblTime: UILabel!
-    var i = 1
+    var counter = 0
     var timer = NSTimer()
+    @IBOutlet weak var lblTime: UILabel!
     
-    @IBOutlet weak var btnTrigger: UIButton!
-    
-    @IBAction func startTimer(sender: AnyObject) {
-        
-        if self.timer.valid {
-            
-            self.timer.invalidate()
-            btnTrigger.setTitle("Start", forState: UIControlState.Normal)
-        }else{
-            
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateTime", userInfo: nil, repeats: true)
-            btnTrigger.setTitle("Stop", forState: UIControlState.Normal)
-        }
+    @IBAction func reset(sender: AnyObject) {
+        resetTimer()
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    
+    @IBAction func play(sender: AnyObject) {
+        startTimer()
     }
-
-    func updateTime(){
-        
-        lblTime.text = String(i)
-        i++
+    
+    @IBAction func pause(sender: AnyObject) {
+        pauseTimer()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+    
+    func startTimer() {
+        
+        if !self.timer.valid {
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "intervalAction", userInfo: nil, repeats: true)
+        }
+    }
+    
+    func intervalAction(){
+        increaseCounter()
+        updateTime()
+    }
+    
+    func pauseTimer(){
+        if self.timer.valid {
+            self.timer.invalidate()
+        }
+    }
 
+    func increaseCounter(){
+        var actualCounter = getCounter()
+        setCounter(++actualCounter)
+    }
+    
+    func resetCounter(){
+        setCounter(0)
+    }
+    
+    func setCounter(value:Int){
+        self.counter = value
+    }
+    
+    func getCounter() -> Int{
+        return counter
+    }
+    
+    func updateTime(){
+        lblTime.text = String(getCounter())
+    }
+    
+    func resetTimer(){
+
+        pauseTimer()
+        resetCounter()
+        updateTime()
+        
+    }
 
 }
 
